@@ -37,7 +37,7 @@ public:
   ///
   /// Uses helper methods in systematicstools/interface/SystMetaData.hh to check
   /// for parameters identified by paramId_t or std::string
-  template <typename T> bool ParamIsHandled(T ident) {
+  template <typename T> bool ParamIsHandled(T ident) const {
     return HasParam(fSystMetaData, ident);
   }
 
@@ -93,7 +93,7 @@ public:
   ///
   /// Checks that the headers have been built/loaded with CheckHaveMetaData,
   /// which throws if they haven't.
-  SystMetaData const &GetSystMetaData();
+  SystMetaData const &GetSystMetaData() const;
 
   ///\brief Build the Parameter Headers FHiCL document that can be used to
   /// re-configure an instance of this tool via ConfigureFromParameterHeaders
@@ -115,6 +115,10 @@ public:
 #ifndef NO_ART
   virtual std::unique_ptr<EventResponse>
   GetEventResponse(art::Event const &) = 0;
+
+  //==== return 1-filled event_unit_response_t
+  systtools::event_unit_response_t GetDefaultEventResponse() const;
+
   std::unique_ptr<EventAndCVResponse>
   GetEventVariationAndCVResponse(art::Event const &);
 #endif
@@ -160,7 +164,7 @@ protected:
   /// If i is passed then it only checks for that specific paramId_t.
   ///
   /// Throws if no such metadata can be found.
-  void CheckHaveMetaData(paramId_t i = kParamUnhandled<paramId_t>);
+  void CheckHaveMetaData(paramId_t i = kParamUnhandled<paramId_t>) const;
 
   /// Class name of the tool implementation
   std::string fToolType;
@@ -192,6 +196,8 @@ private:
   /// GetSystMetaData to inspect it.
   SystMetaData fSystMetaData;
 };
+
+ParamResponses responses_for(SystParamHeader const& sph);
 
 } // namespace systtools
 

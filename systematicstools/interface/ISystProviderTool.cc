@@ -58,7 +58,7 @@ void ISystProviderTool::ConfigureFromToolConfig(fhicl::ParameterSet const &ps,
   fHaveSystMetaData = true;
 }
 
-SystMetaData const &ISystProviderTool::GetSystMetaData() {
+SystMetaData const &ISystProviderTool::GetSystMetaData() const{
   CheckHaveMetaData();
   return fSystMetaData;
 }
@@ -110,6 +110,29 @@ bool ISystProviderTool::ConfigureFromParameterHeaders(
 }
 
 #ifndef NO_ART
+
+ParamResponses 
+responses_for(SystParamHeader const& sph)
+{
+  if (sph.isCorrection) {
+    return {sph.systParamId, std::vector{1.}};
+  }
+  return {sph.systParamId, std::vector<double>(sph.paramVariations.size(), 1.)};
+}
+
+systtools::event_unit_response_t
+ISystProviderTool::GetDefaultEventResponse() const
+{
+  auto const& smd = this->GetSystMetaData();
+  systtools::event_unit_response_t resp;
+  resp.reserve(smd.size());
+  for(auto const& sph : smd) {
+    resp.push_back(responses_for(sph));
+  }
+  return resp;
+}
+
+
 std::unique_ptr<EventAndCVResponse>
 ISystProviderTool::GetEventVariationAndCVResponse(art::Event const &evt) {
   std::unique_ptr<EventAndCVResponse> responseandCV =
@@ -157,7 +180,7 @@ ISystProviderTool::GetEventVariationAndCVResponse(art::Event const &evt) {
 }
 #endif
 
-void ISystProviderTool::CheckHaveMetaData(paramId_t i) {
+void ISystProviderTool::CheckHaveMetaData(paramId_t i) const{
   if (!fHaveSystMetaData) {
     throw ISystProviderTool_metadata_not_generated()
         << "[ERROR]: Requested syst set configuration from syst provider "
