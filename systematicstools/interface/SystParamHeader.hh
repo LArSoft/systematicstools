@@ -26,7 +26,7 @@ constexpr double kDefaultDouble = 0xdeadbeef;
 /// parameter, or with size_t when requesting the index of a parameter.
 template <typename T>
 constexpr T kParamUnhandled = std::numeric_limits<T>::max();
-template <> constexpr double kParamUnhandled<double> = kDefaultDouble;
+template <> inline constexpr double kParamUnhandled<double> = kDefaultDouble;
 
 /// Exception to be thrown when a SystParamHeader fails Validate
 /// N.B. It is not thrown by the validate method upon failure, but should be
