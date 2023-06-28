@@ -30,6 +30,9 @@ void FinalizeAndValidateDependentParameters(
             << std::quoted(resp_hdr.prettyName) << " is configured with "
             << NVariations << " variations.";
       }
+      else{
+        NVariations = hdr.paramVariations.size();
+      }
     }
   }
 
