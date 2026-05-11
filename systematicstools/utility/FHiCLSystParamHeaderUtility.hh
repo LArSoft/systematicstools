@@ -4,6 +4,7 @@
 #include "systematicstools/utility/exceptions.hh"
 
 #include <string>
+#include <cstdint>  // for uint64_t
 
 namespace fhicl {
 class ParameterSet;
